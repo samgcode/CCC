@@ -1,0 +1,12 @@
+
+close docker container and project
+cmd shift p
+Remote: close remote connection
+
+Online grader:
+sgaudet
+samuel2014
+
+https://cccgrader.com/home.php
+https://cccgrader.com/directions.pdf
+https://cccgrader.com/rules.pdf
