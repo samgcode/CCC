@@ -1,3 +1,5 @@
+package Problem5Copy;
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,12 +44,38 @@ public class Main {
         int numActions = firstLine.get(2);
 
         List<Integer> people = new ArrayList<Integer>(thirdLine);
+        List<Integer> peopleTotal = getPeople(people);
 
         List<List<Integer>> lines = getLines(numLines, secondLine);
 
         List<Station> stations = getStations(lines, people);
         
-        executeInstructions(stations);
+        executeInstructions(stations, peopleTotal);
+    }
+
+    public static List<Integer> getPeople(List<Integer> peoples) {
+        List<Integer> peopleTotals = new ArrayList<Integer>();
+        int totalPeople = 0;
+        
+        for (Integer people : peoples) {
+            totalPeople += people;
+            peopleTotals.add(totalPeople);
+        }
+
+        return peopleTotals;
+    }
+
+    public static List<Integer> getPeopleWithStations(List<Station> stations) {
+        List<Integer> peopleTotals = new ArrayList<Integer>();
+        int totalPeople = 0;
+        
+        for (Station station : stations) {
+            int people = station.people;
+            totalPeople += people;
+            peopleTotals.add(totalPeople);
+        }
+
+        return peopleTotals;
     }
 
     public static List<Integer> parseInput(String input) {
@@ -148,7 +176,7 @@ public class Main {
         return true;
     }
 
-    public static void executeInstructions(List<Station> inputStations) {
+    public static void executeInstructions(List<Station> inputStations, List<Integer> people) {
         List<Station> stations = new ArrayList<Station>(inputStations);
 
         File file = new File("/workspaces/2017/data/s5/" + filename + ".in");
@@ -166,24 +194,19 @@ public class Main {
                 } else {
                     List<Integer> instruction = parseInput(instructionStr);
                     if(instruction.get(0) == 1) {
-                        InstructionThread thread = new InstructionThread(stations, instruction.get(1), instruction.get(2), lineCount); 
+                        InstructionThread thread = new InstructionThread(people, instruction.get(1), instruction.get(2), lineCount); 
                         thread.start();
                         threads.add(thread);
                     } else {
-                        int line = instruction.get(1);
-                        stations = operateLine(stations, line);
+                        // joinThreads(threads);
+                        // threads = new ArrayList<InstructionThread>();
+                        // int line = instruction.get(1);
+                        // stations = operateLine(stations, line);
+                        // getPeopleWithStations(stations);
                     }
                 }
-                if(lineCount % 4 == 0) {
-                    for (InstructionThread thread : threads) {
-                        try {
-                            thread.join();
-                            System.out.println(thread.result);
-                        } catch (Exception error) {
-                            System.out.println(error);
-                            error.printStackTrace();
-                        }
-                    }
+                if(lineCount % 15 == 0) {
+                    joinThreads(threads);
                     threads = new ArrayList<InstructionThread>();
                 }
                 lineCount++;
@@ -193,8 +216,20 @@ public class Main {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+        joinThreads(threads);
+        threads = new ArrayList<InstructionThread>();
+    }
 
-        
+    public static void joinThreads(List<InstructionThread> threads) {
+        for (InstructionThread thread : threads) {
+            try {
+                thread.join();
+                System.out.println(thread.result);
+            } catch (Exception error) {
+                System.out.println(error);
+                error.printStackTrace();
+            }
+        }
     }
 
     public static List<Station> operateLine(List<Station> stations, int line) {
@@ -249,15 +284,15 @@ class Station {
 
 class InstructionThread extends Thread {
 
-    List<Station> _stations; 
+    List<Integer> _people; 
     int _min; 
     int _max;
     int _id;
 
     int result;
 
-    public InstructionThread(List<Station> stations, int min, int max, int id) {
-        _stations = stations;
+    public InstructionThread(List<Integer> people, int min, int max, int id) {
+        _people = people;
         _min = min;
         _max = max;
         _id = id;
@@ -266,22 +301,25 @@ class InstructionThread extends Thread {
     public void run() {
         try {
             // System.out.println ("Thread " + Thread.currentThread().getId() + " is running");
-            conductSurvey(_stations, _min, _max, Thread.currentThread().getId(), _id);
+            conductSurvey(_people, _min, _max, Thread.currentThread().getId(), _id);
         } catch (Exception err) { 
             System.out.println ("Exception is caught"); 
             System.out.println(err);
         } 
     }
 
-    void conductSurvey(List<Station> stations, int min, int max, long threadId, int id) {
-        int people = 0;
-        for(int stationIndex = 0; stationIndex < stations.size(); stationIndex++) {
-            Station station = stations.get(stationIndex);
-            int stationNumber = station.station;
-            if(stationNumber >= min && stationNumber <= max) {
-                people += station.people;
-            }
+    void conductSurvey(List<Integer> people, int min, int max, long threadId, int id) {
+        // int people = 0;
+        // for(int stationIndex = 0; stationIndex < stations.size(); stationIndex++) {
+        //     Station station = stations.get(stationIndex);
+        //     int stationNumber = station.station;
+        //     if(stationNumber >= min && stationNumber <= max) {
+        //         people += station.people;
+        //     }
+        // }
+        result = people.get(max-1);
+        if(min > 2) {
+            result -= people.get(min-2);
         }
-        result = people;
     }
 }

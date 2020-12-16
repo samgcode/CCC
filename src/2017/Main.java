@@ -1,4 +1,4 @@
-package Problem5Copy;
+// package Problem5Copy;
 
 import java.util.Collections;
 import java.util.ArrayList;
@@ -44,12 +44,38 @@ public class Main {
         int numActions = firstLine.get(2);
 
         List<Integer> people = new ArrayList<Integer>(thirdLine);
+        List<Integer> peopleTotal = getPeople(people);
 
         List<List<Integer>> lines = getLines(numLines, secondLine);
 
         List<Station> stations = getStations(lines, people);
         
-        executeInstructions(stations);
+        executeInstructions(stations, peopleTotal);
+    }
+
+    public static List<Integer> getPeople(List<Integer> peoples) {
+        List<Integer> peopleTotals = new ArrayList<Integer>();
+        int totalPeople = 0;
+        
+        for (Integer people : peoples) {
+            totalPeople += people;
+            peopleTotals.add(totalPeople);
+        }
+
+        return peopleTotals;
+    }
+
+    public static List<Integer> getPeopleWithStations(List<Station> stations) {
+        List<Integer> peopleTotals = new ArrayList<Integer>();
+        int totalPeople = 0;
+        
+        for (Station station : stations) {
+            int people = station.people;
+            totalPeople += people;
+            peopleTotals.add(totalPeople);
+        }
+
+        return peopleTotals;
     }
 
     public static List<Integer> parseInput(String input) {
@@ -150,7 +176,7 @@ public class Main {
         return true;
     }
 
-    public static void executeInstructions(List<Station> inputStations) {
+    public static void executeInstructions(List<Station> inputStations, List<Integer> people) {
         List<Station> stations = new ArrayList<Station>(inputStations);
 
         File file = new File("/workspaces/2017/data/s5/" + filename + ".in");
@@ -172,10 +198,11 @@ public class Main {
                         thread.start();
                         threads.add(thread);
                     } else {
-                        joinThreads(threads);
-                        threads = new ArrayList<InstructionThread>();
-                        int line = instruction.get(1);
-                        stations = operateLine(stations, line);
+                        // joinThreads(threads);
+                        // threads = new ArrayList<InstructionThread>();
+                        // int line = instruction.get(1);
+                        // stations = operateLine(stations, line);
+                        // getPeopleWithStations(stations);
                     }
                 }
                 if(lineCount % 15 == 0) {
@@ -291,5 +318,9 @@ class InstructionThread extends Thread {
             }
         }
         result = people;
+        // result = people.get(max-1);
+        // if(min > 2) {
+        //     result -= people.get(min-2);
+        // }
     }
 }
