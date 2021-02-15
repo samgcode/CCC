@@ -15,7 +15,7 @@ public class Main {
         List<String> data = new ArrayList<String>();
         
         String filename = "s1.15";
-        File file = new File("/workspaces/2017/data/2018/s1/" + filename + ".in");
+        File file = new File("/Users/44146002/Documents/Code/CCC-master/data/2018/s1/" + filename + ".in");
         try {
             Scanner myReader = new Scanner(file);
             // Scanner myReader = new Scanner(new InputStreamReader(System.in));
